@@ -1,0 +1,29 @@
+
+#require 'csv'
+require_relative 'trade'
+require_relative 'portfolio'
+require_relative 'price'
+
+trade_list = Trade.new
+price = Price.new
+
+my_portfolio = Portfolio.new
+
+trade_list = my_portfolio.load_portfolio ("/Users/GFDS/RubymineProjects/StockTest/Stock.txt")
+
+#my_portfolio.print_portfolio_header
+
+#my_portfolio.print_portfolio_trades
+
+#puts trade_list[2].ticker
+
+#trade_list[2].print_a_trade
+
+price_list = price ("/Users/GFDS/RubymineProjects/StockTest/Prices.txt").load_prices
+
+puts "::::::  Finding Stock by Ticker :::::::::"
+trade_index = trade_list.find_index  {|item| item.ticker == "F" }
+price_index = price_list.find_index  {|item| item.ticker == "DB" }
+puts price_list[price_index].price
+puts trade_list[trade_index].ticker
+

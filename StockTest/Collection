@@ -1,0 +1,125 @@
+
+require 'csv'
+require_relative 'stock'
+
+stock = Stock.new
+stock2 = Stock.new
+
+stock.ticker = "IBM"
+puts stock.ticker
+
+stock2.ticker = "FB"
+puts stock2.ticker
+
+stock_array = []
+$i=0
+
+while $i < 10 do
+  stock = Stock.new
+  stock_array<<stock
+  stock_array[$i].ticker = "Ticker"+$i.to_s
+  stock_array[$i].full_name = "Full_Name"+$i.to_s
+  stock_array[$i].print_a_stock
+  $i=$i+1
+end
+
+### now lets work on finding a stock by Ticker
+
+puts "::::::  Finding :::::::::"
+puts stock_array.find_index  {|item| item.ticker == "Ticker8" }
+
+
+
+class Stocks
+  @stock_hash = Hash.new("Nothing found in Stock Hash")
+  @stock_qty = Array.new
+  @stock_buypx = Array.new
+  def initialize
+
+  end
+
+  def import_stocks
+    File.open("/Users/GFDS/RubymineProjects/StockTest/Stock.txt").readlines.each_with_index do |line, i|
+      next if i == 0
+      CSV.parse(line) do |line|
+        ptf, ticker, qty, buypx = line
+        @stock_hash[ticker]= i-1
+        @stock_qty[i]=qty.to_f
+        @stock_buypx[i]=buypx.to_f
+        i=i+1
+      end
+  end
+
+  end
+  end
+
+class Prices
+
+  @price_hash = Hash.new("Nothing found in Price Hash")
+  @stockpx = Array.new
+
+  def initialize
+
+  end
+
+  def import_prices
+    File.open("/Users/GFDS/RubymineProjects/StockTest/Prices.txt").readlines.each_with_index do |line, i|
+      next if i == 0
+      CSV.parse(line) do |line|
+        ticker, px = line
+        @price_hash[ticker]= i-1
+        @stockpx[i]=px.to_f
+        i=i+1
+      end
+  end
+
+ end
+
+end
+
+class Portfolio
+  @stock_hash
+
+  def initialize
+
+
+  end
+  def export_analytics (filename, stock_index, stock_hash, stockpnl)
+    File::exist?(filename) do
+      puts "exists"
+      File::delete(filename)
+    end
+    CSV.open(filename, 'w') do |csv|
+      csv << ["ticker","PnL"]
+      stock_hash.each do |ticker, index|
+        stock_index = stock_hash[ticker]+1
+        csv << [ticker, stockpnl [stock_index-1].to_s]
+      end
+    end
+  end
+end
+
+######  Calculate
+stocks = Stocks.new()
+prices = Prices.new()
+portfolio = Portfolio.new()
+
+portfolio.export_analytics("pnl.csv", )
+
+
+
+
+@stock_hash.each do |ticker, index|
+  @stock_index = @stock_hash[ticker]+1
+  @price_index = @price_hash[ticker]+1
+  @pnl =  (@stock_qty[@stock_index]*(@stockpx[@price_index]-@stock_buypx[@stock_index])).round(2)
+  @stockpnl [@stock_index-1]= @pnl
+  puts "P&L on "+ticker+" is "+@stockpnl[@stock_index-1].to_s
+end
+
+###### Write to file
+
+
+
+puts File::read("pnl.csv")
+
